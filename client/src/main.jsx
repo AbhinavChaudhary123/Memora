@@ -190,47 +190,80 @@ function StoryCard({ s, own = false, onDelete }) {
     setSaved(data.bookmarked);
   };
   return (
-    <article className="story-card">
-      {s.cover ? (
-        <img src={s.cover} alt="" />
-      ) : (
-        <div className="cover-placeholder">
-          <Clock3 />
-        </div>
-      )}
-      <div className="story-body">
-        <div className="story-meta">
-          <span>{s.mood || "nostalgic"}</span>
-          <span>{s.year || new Date(s.createdAt).getFullYear()}</span>
-        </div>
-        <h3>{s.title}</h3>
-        <p>{s.story}</p>
-        <div className="tags">
-          {(s.tags || []).slice(0, 4).map((t) => (
-            <small key={t}>#{t}</small>
-          ))}
-        </div>
-        <div className="card-foot">
-          <Link to={`/profile/${s.author?.username}`} className="author">
-            @{s.author?.username}
-          </Link>
-          <div className="actions">
-            <button onClick={toggle} className={liked ? "liked" : ""}>
-              <Heart size={17} fill={liked ? "currentColor" : "none"} />
-              {count}
-            </button>
-            <button onClick={bookmark} className={saved ? "saved" : ""}>
-              <Bookmark size={17} fill={saved ? "currentColor" : "none"} />
-            </button>
-            {own && (
-              <button onClick={() => onDelete(s._id)}>
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        </div>
+  <article
+  className="story-card"
+  onClick={() => nav(`/story/${s._id}`)}
+  style={{ cursor: "pointer" }}
+>
+  {s.cover ? (
+    <img src={s.cover} alt={s.title || "Story cover"} />
+  ) : (
+    <div className="cover-placeholder">
+      <Clock3 />
+    </div>
+  )}
+
+  <div className="story-body">
+    <div className="story-meta">
+      <span>{s.mood || "nostalgic"}</span>
+      <span>
+        {s.year || new Date(s.createdAt).getFullYear()}
+      </span>
+    </div>
+
+    <h3>{s.title}</h3>
+
+    <p>{s.story}</p>
+
+    <div className="tags">
+      {(s.tags || []).slice(0, 4).map((t) => (
+        <small key={t}>#{t}</small>
+      ))}
+    </div>
+
+    <div className="card-foot">
+      <Link
+        to={`/profile/${s.author?.username}`}
+        className="author"
+        onClick={(e) => e.stopPropagation()}
+      >
+        @{s.author?.username}
+      </Link>
+
+      <div
+        className="actions"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={toggle}
+          className={liked ? "liked" : ""}
+        >
+          <Heart
+            size={17}
+            fill={liked ? "currentColor" : "none"}
+          />
+          {count}
+        </button>
+
+        <button
+          onClick={bookmark}
+          className={saved ? "saved" : ""}
+        >
+          <Bookmark
+            size={17}
+            fill={saved ? "currentColor" : "none"}
+          />
+        </button>
+
+        {own && (
+          <button onClick={() => onDelete(s._id)}>
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
-    </article>
+    </div>
+  </div>
+</article>
   );
 }
 function Auth({ signup = false }) {
@@ -615,25 +648,44 @@ function Places() {
       </div>
       <div className="places-grid">
         {places.map((p) => (
-          <article className="place-card" key={p._id}>
-            <div className="place-pin">
-              <MapPin />
-            </div>
-            <div>
-              <span className="place-location">
-                {p.city}
-                {p.city && p.state ? ", " : ""}
-                {p.state}
-              </span>
-              <h3>{p.placeName}</h3>
-              <p>{p.description}</p>
-              {p.memory && <blockquote>“{p.memory}”</blockquote>}
-              <div className="card-foot">
-                <span className="author">@{p.author?.username}</span>
-                <span className="muted">{p.bestTimeToVisit}</span>
-              </div>
-            </div>
-          </article>
+          <article
+  className="place-card"
+  key={p._id}
+  onClick={() => nav(`/place/${p._id}`)}
+  style={{ cursor: "pointer" }}
+>
+  <div className="place-pin">
+    <MapPin />
+  </div>
+
+  <div>
+    <span className="place-location">
+      {p.city}
+      {p.city && p.state ? ", " : ""}
+      {p.state}
+    </span>
+
+    <h3>{p.placeName}</h3>
+
+    <p>{p.description}</p>
+
+    {p.memory && (
+      <blockquote>
+        “{p.memory}”
+      </blockquote>
+    )}
+
+    <div className="card-foot">
+      <span className="author">
+        @{p.author?.username}
+      </span>
+
+      <span className="muted">
+        {p.bestTimeToVisit}
+      </span>
+    </div>
+  </div>
+</article>
         ))}
       </div>
     </main>
