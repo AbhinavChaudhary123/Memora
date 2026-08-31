@@ -697,3 +697,511 @@ footer span {
     min-height: auto;
   }
 }
+
+
+/* =========================================================
+   MEMORA — RESPONSIVE OVERRIDES
+   Keeps the existing color palette and visual style.
+========================================================= */
+
+/* Prevent accidental horizontal scrolling */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+/* Make long text/URLs behave on small screens */
+.story-card h3,
+.story-card p,
+.place-card h3,
+.place-card p,
+.profile h1,
+.page-title h1,
+.hero h1 {
+  overflow-wrap: anywhere;
+}
+
+/* Better touch targets */
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 1100px) {
+  header {
+    padding: 0 4vw;
+  }
+
+  .hero {
+    padding-left: 6vw;
+    padding-right: 6vw;
+    gap: 45px;
+  }
+
+  .section {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .grid {
+    gap: 18px;
+  }
+
+  .story-card h3 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  header {
+    height: 68px;
+  }
+
+  .brand {
+    font-size: 18px;
+  }
+
+  nav {
+    top: 68px;
+    padding: 12px 5vw 16px;
+    gap: 3px;
+    box-shadow: 0 10px 25px rgba(44, 44, 44, 0.06);
+  }
+
+  nav a,
+  nav .navbtn {
+    width: 100%;
+    min-height: 44px;
+    justify-content: flex-start;
+    padding: 11px 13px;
+  }
+
+  nav .navcta {
+    justify-content: center;
+    margin-top: 4px;
+  }
+
+  .menu {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    color: var(--ink);
+  }
+
+  .hero {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    padding: 70px 7vw 60px;
+    gap: 42px;
+  }
+
+  .hero h1 {
+    font-size: clamp(44px, 9vw, 68px);
+  }
+
+  .hero p {
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  .hero-note {
+    width: min(100%, 430px);
+    margin: 0 auto;
+  }
+
+  .section-head,
+  .page-title {
+    margin-bottom: 28px;
+  }
+
+  .section-head h2 {
+    font-size: 39px;
+  }
+
+  .section-head h1,
+  .page-title h1 {
+    font-size: clamp(42px, 8vw, 58px);
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .places-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search {
+    max-width: none;
+  }
+
+  .form-page {
+    padding-top: 55px;
+  }
+
+  .profile h1 {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding: 55px 6vw 50px;
+  }
+
+  .hero:after {
+    font-size: 270px;
+    right: -75px;
+    bottom: -90px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .primary,
+  .hero-actions .secondary {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  .section {
+    padding: 45px 5vw;
+  }
+
+  .section-head,
+  .page-title {
+    gap: 18px;
+  }
+
+  .section-head h2 {
+    font-size: 35px;
+  }
+
+  .section-head h1,
+  .page-title h1 {
+    font-size: clamp(40px, 11vw, 52px);
+    letter-spacing: -2px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .story-card > img,
+  .cover-placeholder {
+    height: clamp(180px, 52vw, 240px);
+  }
+
+  .story-body {
+    padding: 18px;
+  }
+
+  .story-card h3 {
+    font-size: 26px;
+  }
+
+  .card-foot {
+    align-items: flex-start;
+  }
+
+  .actions {
+    flex-shrink: 0;
+  }
+
+  .two,
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    margin-bottom: 38px;
+  }
+
+  .stats div {
+    padding: 17px;
+  }
+
+  .places-grid {
+    gap: 15px;
+  }
+
+  .place-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 19px;
+  }
+
+  .place-pin {
+    width: 42px;
+    height: 42px;
+  }
+
+  .place-card h3 {
+    font-size: 25px;
+  }
+
+  .editor {
+    padding: 20px;
+  }
+
+  .auth {
+    min-height: calc(100vh - 68px);
+    padding: 35px 15px 55px;
+  }
+
+  .auth-card {
+    padding: 25px 20px;
+    border-radius: 10px;
+  }
+
+  .auth-card h1 {
+    font-size: 42px;
+  }
+
+  .profile-hero {
+    gap: 17px;
+    padding-bottom: 30px;
+  }
+
+  .profile h1 {
+    font-size: clamp(40px, 11vw, 52px);
+  }
+
+  .toast {
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    text-align: center;
+  }
+
+  footer {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 0 4vw;
+  }
+
+  .brand {
+    font-size: 16px;
+    letter-spacing: -0.7px;
+  }
+
+  .hero {
+    padding: 48px 5vw 42px;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    margin-bottom: 14px;
+  }
+
+  .hero h1,
+  .auth-card h1,
+  .page-title h1,
+  .section-head h1 {
+    font-size: clamp(36px, 12vw, 46px);
+    line-height: 1;
+    letter-spacing: -1.8px;
+    margin-bottom: 18px;
+  }
+
+  .hero p {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .hero-note {
+    padding: 21px;
+    transform: rotate(1deg);
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
+  .hero-note span {
+    font-size: 21px;
+  }
+
+  .section {
+    padding: 38px 4.5vw;
+  }
+
+  .section-head h2 {
+    font-size: 31px;
+  }
+
+  .search {
+    height: 44px;
+  }
+
+  .story-card h3 {
+    font-size: 24px;
+  }
+
+  .story-card p {
+    font-size: 13.5px;
+  }
+
+  .story-meta {
+    font-size: 9px;
+    gap: 8px;
+  }
+
+  .card-foot {
+    flex-wrap: wrap;
+  }
+
+  .author {
+    max-width: 55%;
+    overflow-wrap: anywhere;
+  }
+
+  .actions button {
+    min-width: 34px;
+    min-height: 34px;
+    justify-content: center;
+  }
+
+  .form-page {
+    padding: 38px 12px 65px;
+  }
+
+  .editor {
+    padding: 17px;
+    border-radius: 10px;
+  }
+
+  .editor input,
+  .editor textarea,
+  .editor select,
+  .auth-card input {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .editor textarea {
+    min-height: 150px;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+    margin-left: -2px;
+    margin-right: -2px;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs button {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 11px 13px;
+  }
+
+  .place-card {
+    padding: 17px;
+  }
+
+  .place-card blockquote {
+    font-size: 16px;
+    margin: 14px 0;
+  }
+
+  .profile-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .avatar {
+    width: 76px;
+    height: 76px;
+    font-size: 31px;
+  }
+
+  .profile-hero p {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .subhead {
+    font-size: 29px;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand {
+    font-size: 15px;
+  }
+
+  .hero h1,
+  .auth-card h1,
+  .page-title h1,
+  .section-head h1 {
+    font-size: 34px;
+  }
+
+  .story-body {
+    padding: 15px;
+  }
+
+  .story-card h3 {
+    font-size: 22px;
+  }
+
+  .hero-note {
+    padding: 17px;
+  }
+
+  .auth-card {
+    padding: 21px 16px;
+  }
+
+  .editor {
+    padding: 14px;
+  }
+}
+
+/* Devices with coarse pointers: make interactive controls easier to tap */
+@media (hover: none) and (pointer: coarse) {
+  nav a,
+  nav .navbtn,
+  .actions button,
+  .tabs button,
+  .primary,
+  .secondary,
+  .menu {
+    min-height: 44px;
+  }
+
+  .story-card:hover {
+    transform: none;
+    box-shadow: 0 5px 16px rgba(44, 44, 44, 0.05);
+  }
+
+  .primary:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
