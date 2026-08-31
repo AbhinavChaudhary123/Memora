@@ -8,7 +8,7 @@ import stories from "./routes/stories.js";
 import places from "./routes/places.js";
 import users from "./routes/users.js";
 const app = express();
-app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
+app.use(cors({ origin: "https://memora-1-afuw.onrender.com" }));
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 app.get("/api/health", (req, res) =>
