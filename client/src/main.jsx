@@ -314,6 +314,149 @@ function StoryCard({ s, own = false, onDelete }) {
     </article>
   );
 }
+
+function StoryDetail() {
+  const nav = useNavigate();
+  const id = useLocation().pathname.split("/").pop();
+
+  const [story, setStory] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadStory = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const { data } = await api.get(`/stories/${id}`);
+
+        setStory(data);
+      } catch (e) {
+        console.error("Failed to load story:", e);
+        setError(
+          e.response?.data?.message ||
+            "Could not load this memory."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      loadStory();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="empty">
+        Opening this memory…
+      </main>
+    );
+  }
+
+  if (error || !story) {
+    return (
+      <main className="empty">
+        <p>{error || "Story not found."}</p>
+
+        <button
+          className="primary"
+          onClick={() => nav(-1)}
+        >
+          <ArrowLeft size={18} />
+          Go back
+        </button>
+      </main>
+    );
+  }
+
+  return (
+    <main className="detail-page">
+      <button
+        className="back-button"
+        onClick={() => nav(-1)}
+      >
+        <ArrowLeft size={18} />
+        Back
+      </button>
+
+      <article className="detail-card">
+        {story.cover ? (
+          <img
+            className="detail-cover"
+            src={story.cover}
+            alt={story.title || "Story cover"}
+          />
+        ) : (
+          <div className="detail-cover cover-placeholder">
+            <Clock3 size={55} />
+          </div>
+        )}
+
+        <div className="detail-content">
+          <div className="story-meta">
+            <span>
+              {story.mood || "nostalgic"}
+            </span>
+
+            <span>
+              {story.year ||
+                new Date(
+                  story.createdAt
+                ).getFullYear()}
+            </span>
+          </div>
+
+          <h1>{story.title}</h1>
+
+          <div className="detail-author">
+            Written by{" "}
+            <Link
+              to={`/profile/${story.author?.username}`}
+            >
+              @{story.author?.username}
+            </Link>
+
+            {story.location && (
+              <>
+                {" "}· {story.location}
+              </>
+            )}
+          </div>
+
+          <div className="detail-story">
+            {story.story
+              ?.split("\n")
+              .map((paragraph, index) => (
+                <p key={index}>
+                  {paragraph}
+                </p>
+              ))}
+          </div>
+
+          {story.tags?.length > 0 && (
+            <div className="detail-tags tags">
+              {story.tags.map((tag) => (
+                <small key={tag}>
+                  #{tag}
+                </small>
+              ))}
+            </div>
+          )}
+
+          <div className="detail-comments">
+            <h2>
+              A memory worth keeping.
+            </h2>
+          </div>
+        </div>
+      </article>
+    </main>
+  );
+}
+
 function Auth({ signup = false }) {
   const nav = useNavigate();
   const [form, setForm] = useState({ username: "", email: "", password: "" }),
@@ -847,6 +990,14 @@ function App() {
         <Places />
       </Layout>
     );
+
+  if (path.startsWith("/story/"))
+  return (
+    <Layout>
+      <StoryDetail />
+    </Layout>
+  );
+  
   if (path.startsWith("/profile/"))
     return (
       <Layout>
