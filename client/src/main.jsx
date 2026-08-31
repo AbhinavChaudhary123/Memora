@@ -175,95 +175,143 @@ function Home() {
   );
 }
 function StoryCard({ s, own = false, onDelete }) {
-  const [liked, setLiked] = useState(false),
-    [count, setCount] = useState(s.likes?.length || 0),
-    [saved, setSaved] = useState(false);
-  const toggle = async () => {
+  const nav = useNavigate();
+
+  const [liked, setLiked] = useState(false);
+  const [count, setCount] = useState(s.likes?.length || 0);
+  const [saved, setSaved] = useState(false);
+
+  const toggle = async (e) => {
+    e.stopPropagation();
+
     if (!currentUser()) return;
+
     const { data } = await api.post(`/stories/${s._id}/like`);
+
     setLiked(data.liked);
     setCount(data.likes);
   };
-  const bookmark = async () => {
+
+  const bookmark = async (e) => {
+    e.stopPropagation();
+
     if (!currentUser()) return;
-    const { data } = await api.post(`/stories/${s._id}/bookmark`);
+
+    const { data } = await api.post(
+      `/stories/${s._id}/bookmark`
+    );
+
     setSaved(data.bookmarked);
   };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDelete(s._id);
+  };
+
   return (
-  <article
-  className="story-card"
-  onClick={() => nav(`/story/${s._id}`)}
-  style={{ cursor: "pointer" }}
->
-  {s.cover ? (
-    <img src={s.cover} alt={s.title || "Story cover"} />
-  ) : (
-    <div className="cover-placeholder">
-      <Clock3 />
-    </div>
-  )}
+    <article
+      className="story-card"
+      onClick={() => nav(`/story/${s._id}`)}
+      style={{ cursor: "pointer" }}
+    >
+      {s.cover ? (
+        <img
+          src={s.cover}
+          alt={s.title || "Story cover"}
+        />
+      ) : (
+        <div className="cover-placeholder">
+          <Clock3 />
+        </div>
+      )}
 
-  <div className="story-body">
-    <div className="story-meta">
-      <span>{s.mood || "nostalgic"}</span>
-      <span>
-        {s.year || new Date(s.createdAt).getFullYear()}
-      </span>
-    </div>
+      <div className="story-body">
+        <div className="story-meta">
+          <span>
+            {s.mood || "nostalgic"}
+          </span>
 
-    <h3>{s.title}</h3>
+          <span>
+            {s.year ||
+              new Date(s.createdAt).getFullYear()}
+          </span>
+        </div>
 
-    <p>{s.story}</p>
+        <h3>{s.title}</h3>
 
-    <div className="tags">
-      {(s.tags || []).slice(0, 4).map((t) => (
-        <small key={t}>#{t}</small>
-      ))}
-    </div>
+        <p>{s.story}</p>
 
-    <div className="card-foot">
-      <Link
-        to={`/profile/${s.author?.username}`}
-        className="author"
-        onClick={(e) => e.stopPropagation()}
-      >
-        @{s.author?.username}
-      </Link>
+        <div className="tags">
+          {(s.tags || [])
+            .slice(0, 4)
+            .map((t) => (
+              <small key={t}>
+                #{t}
+              </small>
+            ))}
+        </div>
 
-      <div
-        className="actions"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={toggle}
-          className={liked ? "liked" : ""}
-        >
-          <Heart
-            size={17}
-            fill={liked ? "currentColor" : "none"}
-          />
-          {count}
-        </button>
+        <div className="card-foot">
+          <Link
+            to={`/profile/${s.author?.username}`}
+            className="author"
+            onClick={(e) => e.stopPropagation()}
+          >
+            @{s.author?.username}
+          </Link>
 
-        <button
-          onClick={bookmark}
-          className={saved ? "saved" : ""}
-        >
-          <Bookmark
-            size={17}
-            fill={saved ? "currentColor" : "none"}
-          />
-        </button>
+          <div
+            className="actions"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+            <button
+              onClick={toggle}
+              className={
+                liked ? "liked" : ""
+              }
+            >
+              <Heart
+                size={17}
+                fill={
+                  liked
+                    ? "currentColor"
+                    : "none"
+                }
+              />
 
-        {own && (
-          <button onClick={() => onDelete(s._id)}>
-            <Trash2 size={16} />
-          </button>
-        )}
+              {count}
+            </button>
+
+            <button
+              onClick={bookmark}
+              className={
+                saved ? "saved" : ""
+              }
+            >
+              <Bookmark
+                size={17}
+                fill={
+                  saved
+                    ? "currentColor"
+                    : "none"
+                }
+              />
+            </button>
+
+            {own && (
+              <button
+                onClick={handleDelete}
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</article>
+    </article>
   );
 }
 function Auth({ signup = false }) {
@@ -616,21 +664,40 @@ function Diary() {
   );
 }
 function Places() {
-  const [places, setPlaces] = useState([]),
-    [q, setQ] = useState("");
-  const load = async () =>
-    setPlaces((await api.get("/places", { params: { q } })).data);
+  const nav = useNavigate();
+
+  const [places, setPlaces] = useState([]);
+  const [q, setQ] = useState("");
+
+  const load = async () => {
+    try {
+      const response = await api.get("/places", {
+        params: { q },
+      });
+
+      setPlaces(response.data);
+    } catch (error) {
+      console.error("Failed to load places:", error);
+    }
+  };
+
   useEffect(() => {
     load();
   }, []);
+
   return (
     <main className="section">
       <div className="section-head">
         <div>
           <div className="eyebrow">MEMORY MAP</div>
+
           <h1>Places that stayed.</h1>
-          <p>Not every place is a location. Some are chapters.</p>
+
+          <p>
+            Not every place is a location. Some are chapters.
+          </p>
         </div>
+
         <form
           className="search"
           onSubmit={(e) => {
@@ -639,6 +706,7 @@ function Places() {
           }}
         >
           <Search size={18} />
+
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -646,47 +714,54 @@ function Places() {
           />
         </form>
       </div>
+
       <div className="places-grid">
-        {places.map((p) => (
-          <article
-  className="place-card"
-  key={p._id}
-  onClick={() => nav(`/place/${p._id}`)}
-  style={{ cursor: "pointer" }}
->
-  <div className="place-pin">
-    <MapPin />
-  </div>
+        {places.length > 0 ? (
+          places.map((p) => (
+            <article
+              className="place-card"
+              key={p._id}
+              onClick={() => nav(`/place/${p._id}`)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="place-pin">
+                <MapPin />
+              </div>
 
-  <div>
-    <span className="place-location">
-      {p.city}
-      {p.city && p.state ? ", " : ""}
-      {p.state}
-    </span>
+              <div>
+                <span className="place-location">
+                  {p.city}
+                  {p.city && p.state ? ", " : ""}
+                  {p.state}
+                </span>
 
-    <h3>{p.placeName}</h3>
+                <h3>{p.placeName}</h3>
 
-    <p>{p.description}</p>
+                <p>{p.description}</p>
 
-    {p.memory && (
-      <blockquote>
-        “{p.memory}”
-      </blockquote>
-    )}
+                {p.memory && (
+                  <blockquote>
+                    “{p.memory}”
+                  </blockquote>
+                )}
 
-    <div className="card-foot">
-      <span className="author">
-        @{p.author?.username}
-      </span>
+                <div className="card-foot">
+                  <span className="author">
+                    @{p.author?.username}
+                  </span>
 
-      <span className="muted">
-        {p.bestTimeToVisit}
-      </span>
-    </div>
-  </div>
-</article>
-        ))}
+                  <span className="muted">
+                    {p.bestTimeToVisit}
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div className="empty">
+            <p>No memories found for this place.</p>
+          </div>
+        )}
       </div>
     </main>
   );
