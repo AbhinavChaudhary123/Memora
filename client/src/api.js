@@ -1,5 +1,5 @@
 import axios from "axios";
-export const api = axios.create({ baseURL: "http://localhost:5000/api" });
+export const api = axios.create({ baseURL: `${import.meta.env.VITE_API_URL}/api` });
 api.interceptors.request.use((c) => {
   const t = localStorage.getItem("retro_token");
   if (t) c.headers.Authorization = `Bearer ${t}`;
