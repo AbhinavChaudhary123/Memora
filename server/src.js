@@ -11,21 +11,17 @@ import users from "./routes/users.js";
 
 const app = express();
 
-/* =========================
-   CORS
-========================= */
-
 const allowedOrigins = [
   "https://memora-1-afuw.onrender.com",
-  "http://localhost:5173",
+  "http://localhost:5173"
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests without an origin
-      // (Postman, server-to-server, etc.)
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        return callback(null, true);
+      }
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
@@ -35,55 +31,45 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
+    credentials: true
   })
 );
-
-app.options("*", cors());
-
-/* =========================
-   Middleware
-========================= */
 
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 
-/* =========================
-   Health Check
-========================= */
-
 app.get("/api/health", (req, res) => {
-  res.json({
+  res.status(200).json({
     ok: true,
     name: "MEMORA",
-    message: "API is running",
+    message: "API is running"
   });
 });
-
-/* =========================
-   Routes
-========================= */
 
 app.use("/api/auth", auth);
 app.use("/api/stories", stories);
 app.use("/api/places", places);
 app.use("/api/users", users);
 
-/* =========================
-   Error Handler
-========================= */
-
-app.use((err, req, res, next) => {
-  console.error(err);
-
-  res.status(500).json({
-    message: "Something went wrong",
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route not found"
   });
 });
 
-/* =========================
-   Database + Server
-========================= */
+app.use((err, req, res, next) => {
+  console.error("Server Error:", err);
+
+  if (err.message === "Not allowed by CORS") {
+    return res.status(403).json({
+      message: "CORS policy blocked this request"
+    });
+  }
+
+  res.status(500).json({
+    message: "Something went wrong"
+  });
+});
 
 const port = process.env.PORT || 5000;
 
