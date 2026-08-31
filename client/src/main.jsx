@@ -909,6 +909,252 @@ function Places() {
     </main>
   );
 }
+
+function PlaceDetail() {
+  const nav = useNavigate();
+  const location = useLocation();
+
+  const id = location.pathname.split("/").pop();
+
+  const [place, setPlace] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadPlace = async () => {
+      try {
+        setLoading(true);
+
+        const { data } = await api.get(`/places/${id}`);
+
+        setPlace(data);
+      } catch (error) {
+        console.error("Failed to load place:", error);
+
+        setError(
+          error.response?.data?.message ||
+            "Could not load this place."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      loadPlace();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="empty">
+        <p>Opening this memory...</p>
+      </main>
+    );
+  }
+
+  if (error || !place) {
+    return (
+      <main className="empty">
+        <p>{error || "Place not found."}</p>
+
+        <button
+          className="primary"
+          onClick={() => nav(-1)}
+        >
+          ← Go Back
+        </button>
+      </main>
+    );
+  }
+
+  return (
+    <main className="detail-page">
+      <button
+        className="back-button"
+        onClick={() => nav(-1)}
+      >
+        ← Back
+      </button>
+
+      <article className="detail-card place-detail-card">
+        <div className="place-detail-icon">
+          <MapPin size={42} />
+        </div>
+
+        <div className="detail-content">
+          <span className="place-location">
+            {place.city}
+            {place.city && place.state ? ", " : ""}
+            {place.state}
+          </span>
+
+          <h1>{place.placeName}</h1>
+
+          <div className="detail-author">
+            Added by{" "}
+            <Link
+              to={`/profile/${place.author?.username}`}
+            >
+              @{place.author?.username}
+            </Link>
+          </div>
+
+          <div className="detail-story">
+            <p>{place.description}</p>
+          </div>
+
+          {place.memory && (
+            <blockquote className="detail-quote">
+              “{place.memory}”
+            </blockquote>
+          )}
+
+          {place.bestTimeToVisit && (
+            <div className="place-fact">
+              <strong>Best time to visit</strong>
+
+              <span>
+                {place.bestTimeToVisit}
+              </span>
+            </div>
+          )}
+        </div>
+      </article>
+    </main>
+  );
+}
+
+function StoryDetail() {
+  const nav = useNavigate();
+  const location = useLocation();
+
+  const id = location.pathname.split("/").pop();
+
+  const [story, setStory] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadStory = async () => {
+      try {
+        setLoading(true);
+
+        const { data } = await api.get(`/stories/${id}`);
+
+        setStory(data);
+      } catch (error) {
+        console.error("Failed to load story:", error);
+
+        setError(
+          error.response?.data?.message ||
+            "Could not load this memory."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      loadStory();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="empty">
+        <p>Opening this memory...</p>
+      </main>
+    );
+  }
+
+  if (error || !story) {
+    return (
+      <main className="empty">
+        <p>{error || "Story not found."}</p>
+
+        <button
+          className="primary"
+          onClick={() => nav(-1)}
+        >
+          ← Go Back
+        </button>
+      </main>
+    );
+  }
+
+  return (
+    <main className="detail-page">
+      <button
+        className="back-button"
+        onClick={() => nav(-1)}
+      >
+        ← Back
+      </button>
+
+      <article className="detail-card">
+        {story.cover ? (
+          <img
+            className="detail-cover"
+            src={story.cover}
+            alt={story.title || "Story cover"}
+          />
+        ) : (
+          <div className="detail-cover cover-placeholder">
+            <Clock3 size={55} />
+          </div>
+        )}
+
+        <div className="detail-content">
+          <div className="story-meta">
+            <span>
+              {story.mood || "nostalgic"}
+            </span>
+
+            <span>
+              {story.year ||
+                new Date(
+                  story.createdAt
+                ).getFullYear()}
+            </span>
+          </div>
+
+          <h1>{story.title}</h1>
+
+          <div className="detail-author">
+            Written by{" "}
+            <Link
+              to={`/profile/${story.author?.username}`}
+            >
+              @{story.author?.username}
+            </Link>
+          </div>
+
+          <div className="detail-story">
+            {story.story
+              ?.split("\n")
+              .map((paragraph, index) => (
+                <p key={index}>
+                  {paragraph}
+                </p>
+              ))}
+          </div>
+
+          {story.tags?.length > 0 && (
+            <div className="detail-tags tags">
+              {story.tags.map((tag) => (
+                <small key={tag}>
+                  #{tag}
+                </small>
+              ))}
+            </div>
+          )}
+        </div>
+      </article>
+    </main>
+  );
+}
+
 function Profile() {
   const username = useLocation().pathname.split("/").pop();
   const [data, setData] = useState(null);
@@ -985,28 +1231,30 @@ function App() {
       </Layout>
     );
   if (path === "/places")
-    return (
-      <Layout>
-        <Places />
-      </Layout>
-    );
+  return (
+    <Layout>
+      <Places />
+    </Layout>
+  );
 
-  if (path.startsWith("/story/"))
+if (path.startsWith("/place/"))
+  return (
+    <Layout>
+      <PlaceDetail />
+    </Layout>
+  );
+
+if (path.startsWith("/story/"))
   return (
     <Layout>
       <StoryDetail />
     </Layout>
   );
-  
-  if (path.startsWith("/profile/"))
-    return (
-      <Layout>
-        <Profile />
-      </Layout>
-    );
+
+if (path.startsWith("/profile/"))
   return (
     <Layout>
-      <Home />
+      <Profile />
     </Layout>
   );
 }
